@@ -210,9 +210,11 @@ export const DataRow = () => {
           <td>
             {qpercent.some((v) => v === "∞")
               ? "∞"
-              : toPercent(
+              : nums.length !== 0
+              ? toPercent(
                   nums.reduce((acc, value) => acc + value, 0) / nums.length
-                )}
+                )
+              : ""}
           </td>
         </tr>
       </tbody>
