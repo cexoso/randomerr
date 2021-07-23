@@ -14,13 +14,14 @@ const addMinus = (arr: { number: number }[]) => {
     }
   }
 };
-
+const toPercent = (qp: number) => {
+  return String(parseFloat((qp * 100).toFixed(5))) + "%";
+};
 const randInt = (fromIndex: number, toIndex: number) =>
   Math.floor(Math.random() * (toIndex + 1 - fromIndex)) + fromIndex;
 
 const shuffle = (arr: any[]) => {
   const length = arr.length;
-  /******** 区别只有这两行 ********/
   for (let i = 0; i < length; i++) {
     const targetIndex = randInt(i, length - 1);
     let tmp;
@@ -29,7 +30,10 @@ const shuffle = (arr: any[]) => {
     arr[targetIndex] = tmp;
   }
 };
-const Row: React.FC<{ r: number }> = (props) => {
+const Row: React.FC<{
+  r: number;
+  onQPercent: (qp: number | null | string) => void;
+}> = (props) => {
   const countInput = useRef<HTMLInputElement>(null);
   const qualifiedMinIput = useRef<HTMLInputElement>(null);
   const qualifiedMaxIput = useRef<HTMLInputElement>(null);
@@ -60,18 +64,18 @@ const Row: React.FC<{ r: number }> = (props) => {
     const min = getValue(minInput);
     const max = getValue(maxInput);
     const qcount = getValue(qualifiedCountInput);
-    if (qcount === undefined || count === undefined) {
-      return;
-    }
-    if (qcount > count) {
+    if (qcount === undefined || count === undefined || qcount > count) {
       setQpercent("");
+      props.onQPercent(null);
       return;
     }
     if (count === 0) {
       setQpercent("∞");
+      props.onQPercent("∞");
     } else {
-      const qp = (qcount / count) * 100;
-      setQpercent(String(parseFloat(qp.toFixed(5))) + "%");
+      const qp = qcount / count;
+      props.onQPercent(qp);
+      setQpercent(toPercent(qp));
     }
 
     let array = [];
@@ -176,13 +180,41 @@ const Row: React.FC<{ r: number }> = (props) => {
   );
 };
 let r = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+const rr = r.map((value) => ({
+  index: value,
+  qpercent: null,
+}));
 export const DataRow = () => {
+  const [qpercent, setQpercent] = useState<any[]>([]);
+  const nums = qpercent.filter((i) => typeof i === "number");
   return (
     <table className="table">
       <tbody>
-        {r.map((value) => {
-          return <Row key={value} r={value} />;
+        {rr.map((value, index) => {
+          return (
+            <Row
+              key={value.index}
+              r={value.index}
+              onQPercent={(qp) => {
+                setQpercent((qpercent) => {
+                  qpercent[index] = qp;
+                  return [...qpercent];
+                });
+              }}
+            />
+          );
         })}
+        <tr className="value_row">
+          <td className="input_td">平均合格率</td>
+          <td>
+            {qpercent.some((v) => v === "∞")
+              ? "∞"
+              : toPercent(
+                  nums.reduce((acc, value) => acc + value, 0) / nums.length
+                )}
+          </td>
+        </tr>
       </tbody>
     </table>
   );
