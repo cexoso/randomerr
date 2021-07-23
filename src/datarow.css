@@ -1,0 +1,27 @@
+td {
+  color: #000;
+}
+.input {
+  background-color: transparent;
+  border: none;
+  min-width: 2em;
+  width: fit-content;
+  color: #000;
+}
+.input_td {
+  padding: 5px;
+}
+.unqualify {
+  text-decoration: underline;
+}
+.title_row {
+  background-color: cornflowerblue;
+  border: none;
+  outline: none;
+}
+.table {
+  border-collapse: collapse;
+}
+.value_row {
+  background-color: aquamarine;
+}
