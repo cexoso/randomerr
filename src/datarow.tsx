@@ -118,7 +118,7 @@ const Row: React.FC<{
         number: getUnqRandom(),
       });
     }
-    addMinus(array);
+    // addMinus(array);
     shuffle(array);
     setRandomResult(array);
   };
